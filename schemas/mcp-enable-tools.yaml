@@ -86,7 +86,7 @@ actions:
         name: get-environments
         scopes:
           - read
-  - target: $["paths"]["/api/v2/code-refs/repositories"]["get"]
+  - target: $["paths"]["/api/v2/code-refs/statistics/{projectKey}"]["get"]
     update:
       x-speakeasy-mcp:
         description: >
