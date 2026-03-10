@@ -7,7 +7,9 @@ const launchDarkly = new LaunchDarkly({
 });
 
 async function run() {
-  const result = await launchDarkly.codeReferences.listRepositories({});
+  const result = await launchDarkly.codeReferences.getStatistics({
+    projectKey: "<value>",
+  });
 
   console.log(result);
 }

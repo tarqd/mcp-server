@@ -2811,14 +2811,7 @@
           }
         ],
         "operationId": "getRepositories",
-        "x-speakeasy-mcp": {
-          "description": "Identifies which repositories have code references to a given flag, helping agents determine if they're operating on the correct repository and understand the scope of cleanup (single vs multi-repo).\n",
-          "disabled": false,
-          "name": "get-code-references",
-          "scopes": [
-            "read"
-          ]
-        },
+        "x-speakeasy-ignore": true,
         "x-speakeasy-group": "codeReferences",
         "x-speakeasy-name-override": "listRepositories"
       },
@@ -3836,7 +3829,14 @@
           }
         ],
         "operationId": "getStatistics",
-        "x-speakeasy-ignore": true,
+        "x-speakeasy-mcp": {
+          "description": "Identifies which repositories have code references to a given flag, helping agents determine if they're operating on the correct repository and understand the scope of cleanup (single vs multi-repo).\n",
+          "disabled": false,
+          "name": "get-code-references",
+          "scopes": [
+            "read"
+          ]
+        },
         "x-speakeasy-group": "codeReferences"
       }
     },

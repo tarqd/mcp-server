@@ -13,7 +13,7 @@ export * from "./getenvironmentsbyproject.js";
 export * from "./getfeatureflag.js";
 export * from "./getfeatureflags.js";
 export * from "./getfeatureflagstatusacrossenvironments.js";
-export * from "./getrepositories.js";
+export * from "./getstatistics.js";
 export * from "./patchaiconfig.js";
 export * from "./patchaiconfigtargeting.js";
 export * from "./patchaiconfigvariation.js";

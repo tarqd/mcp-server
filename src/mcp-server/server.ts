@@ -24,7 +24,7 @@ import { tool$aiConfigsList } from "./tools/aiConfigsList.js";
 import { tool$aiConfigsUpdate } from "./tools/aiConfigsUpdate.js";
 import { tool$aiConfigsUpdateTargeting } from "./tools/aiConfigsUpdateTargeting.js";
 import { tool$aiConfigsUpdateVariation } from "./tools/aiConfigsUpdateVariation.js";
-import { tool$codeReferencesListRepositories } from "./tools/codeReferencesListRepositories.js";
+import { tool$codeReferencesGetStatistics } from "./tools/codeReferencesGetStatistics.js";
 import { tool$environmentsListByProject } from "./tools/environmentsListByProject.js";
 import { tool$featureFlagsCreate } from "./tools/featureFlagsCreate.js";
 import { tool$featureFlagsDelete } from "./tools/featureFlagsDelete.js";
@@ -43,7 +43,7 @@ export function createMCPServer(deps: {
 }) {
   const server = new McpServer({
     name: "LaunchDarkly",
-    version: "0.6.0",
+    version: "0.6.1",
   });
 
   const client = new LaunchDarklyCore({
@@ -73,7 +73,7 @@ export function createMCPServer(deps: {
   const register = { tool, resource, resourceTemplate, prompt };
   void register; // suppress unused warnings
 
-  tool(tool$codeReferencesListRepositories);
+  tool(tool$codeReferencesGetStatistics);
   tool(tool$featureFlagsGetStatus);
   tool(tool$featureFlagsList);
   tool(tool$featureFlagsCreate);

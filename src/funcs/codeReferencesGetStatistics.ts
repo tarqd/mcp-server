@@ -3,7 +3,7 @@
  */
 
 import { LaunchDarklyCore } from "../core.js";
-import { encodeFormQuery } from "../lib/encodings.js";
+import { encodeFormQuery, encodeSimple } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { compactMap } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
@@ -27,20 +27,21 @@ import { APICall, APIPromise } from "../types/async.js";
 import { Result } from "../types/fp.js";
 
 /**
- * List repositories
+ * Get code references statistics for flags
  *
  * @remarks
- * Get a list of connected repositories. Optionally, you can include branch metadata with the `withBranches` query parameter. Embed references for the default branch with `ReferencesForDefaultBranch`. You can also filter the list of code references by project key and flag key.
+ * Get statistics about all the code references across repositories for all flags in your project that have code references in the default branch, for example, `main`. Optionally, you can include the `flagKey` query parameter to limit your request to statistics about code references for a single flag. This endpoint returns the number of references to your flag keys in your repositories, as well as a link to each repository.
  */
-export function codeReferencesListRepositories(
+export function codeReferencesGetStatistics(
   client: LaunchDarklyCore,
-  request: operations.GetRepositoriesRequest,
+  request: operations.GetStatisticsRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    components.RepositoryCollectionRep,
+    components.StatisticCollectionRep,
     | errors.UnauthorizedErrorRep
     | errors.ForbiddenErrorRep
+    | errors.NotFoundErrorRep
     | errors.RateLimitedErrorRep
     | LaunchDarklyError
     | ResponseValidationError
@@ -61,14 +62,15 @@ export function codeReferencesListRepositories(
 
 async function $do(
   client: LaunchDarklyCore,
-  request: operations.GetRepositoriesRequest,
+  request: operations.GetStatisticsRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      components.RepositoryCollectionRep,
+      components.StatisticCollectionRep,
       | errors.UnauthorizedErrorRep
       | errors.ForbiddenErrorRep
+      | errors.NotFoundErrorRep
       | errors.RateLimitedErrorRep
       | LaunchDarklyError
       | ResponseValidationError
@@ -84,7 +86,7 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => operations.GetRepositoriesRequest$outboundSchema.parse(value),
+    (value) => operations.GetStatisticsRequest$outboundSchema.parse(value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -93,13 +95,19 @@ async function $do(
   const payload = parsed.value;
   const body = null;
 
-  const path = pathToFunc("/api/v2/code-refs/repositories")();
+  const pathParams = {
+    projectKey: encodeSimple("projectKey", payload.projectKey, {
+      explode: false,
+      charEncoding: "percent",
+    }),
+  };
+
+  const path = pathToFunc("/api/v2/code-refs/statistics/{projectKey}")(
+    pathParams,
+  );
 
   const query = encodeFormQuery({
     "flagKey": payload.flagKey,
-    "projKey": payload.projKey,
-    "withBranches": payload.withBranches,
-    "withReferencesForDefaultBranch": payload.withReferencesForDefaultBranch,
   });
 
   const headers = new Headers(compactMap({
@@ -113,7 +121,7 @@ async function $do(
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "getRepositories",
+    operationID: "getStatistics",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,
@@ -143,7 +151,7 @@ async function $do(
 
   const doResult = await client._do(req, {
     context,
-    errorCodes: ["401", "403", "429", "4XX", "5XX"],
+    errorCodes: ["401", "403", "404", "429", "4XX", "5XX"],
     retryConfig: context.retryConfig,
     retryCodes: context.retryCodes,
   });
@@ -157,9 +165,10 @@ async function $do(
   };
 
   const [result] = await M.match<
-    components.RepositoryCollectionRep,
+    components.StatisticCollectionRep,
     | errors.UnauthorizedErrorRep
     | errors.ForbiddenErrorRep
+    | errors.NotFoundErrorRep
     | errors.RateLimitedErrorRep
     | LaunchDarklyError
     | ResponseValidationError
@@ -170,9 +179,10 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(200, components.RepositoryCollectionRep$inboundSchema),
+    M.json(200, components.StatisticCollectionRep$inboundSchema),
     M.jsonErr(401, errors.UnauthorizedErrorRep$inboundSchema),
     M.jsonErr(403, errors.ForbiddenErrorRep$inboundSchema),
+    M.jsonErr(404, errors.NotFoundErrorRep$inboundSchema),
     M.jsonErr(429, errors.RateLimitedErrorRep$inboundSchema),
     M.fail("4XX"),
     M.fail("5XX"),

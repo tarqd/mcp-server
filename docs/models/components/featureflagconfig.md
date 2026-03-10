@@ -18,7 +18,7 @@ let value: FeatureFlagConfig = {
     allowed: [],
   },
   environmentName: "<value>",
-  trackEvents: true,
+  trackEvents: false,
   trackEventsFallthrough: true,
 };
 ```

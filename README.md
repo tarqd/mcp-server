@@ -235,7 +235,7 @@ For supported JavaScript runtimes, please consult [RUNTIMES.md](RUNTIMES.md).
 
 ### [CodeReferences](docs/sdks/codereferences/README.md)
 
-* [listRepositories](docs/sdks/codereferences/README.md#listrepositories) - List repositories
+* [getStatistics](docs/sdks/codereferences/README.md#getstatistics) - Get code references statistics for flags
 
 ### [Environments](docs/sdks/environments/README.md)
 
